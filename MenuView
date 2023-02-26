@@ -1,0 +1,181 @@
+//
+//  MenuView.swift
+//  UI-Elements-Playground
+//
+//  Created by Michael on 2/20/23.
+//
+
+import SwiftUI
+
+/*
+ Side Menu View (02/20/2023)
+ ToDo List:
+ (X) Create a rounded rect for the menu
+ (X) Create an optional Header that has a profile pic and name
+ (X) Create an optional Alert to show announcements, errors, and etc.
+ (X) Create a list view to hold the buttons
+ (X) Create a footer with the version number and all
+ (X) Make the menu dynamic that slides in from the left
+ Started 02/20/2023 and ended on 02/22/2023
+ */
+
+struct MenuView: View {
+    
+    //MARK: - Params
+    @State var menuIsOut: Bool = true                   //pulls out the menu from left
+    @State var menuAlert: Bool = true                   //shows alert message above buttons
+    var alertTitle: String? = "Test Title"
+    var alertSubtitle: String? = "Test Subject"
+    var username: String = "User"
+    var memberSince: String = "2023"
+    
+    var body: some View {
+        
+        GeometryReader { geometry in
+            
+            ZStack {
+                
+                //MARK: Menu Background
+                RoundedRectangle(cornerRadius: 15)
+                    .opacity(0.5)
+                
+                //MARK: - Actual Menu
+                VStack {
+                    MenuUserProfile(
+                        menuUserProfileWidth: geometry.self.size.width * 0.65,
+                        menuUserProfileHeight: 150,
+                        username: username,
+                        memberSince: memberSince)
+                    if menuAlert {
+                        MenuAlertWindow(
+                            alertWindowWidth: geometry.self.size.width * 0.65,
+                            alertWindowHeight: 150,
+                            alertTitle: alertTitle!,
+                            alertSubTitle: alertSubtitle!)
+                    }
+                    MenuButtonListView()
+                    MenuViewFooter()
+                    Spacer()
+                }
+            }
+            .frame(
+                width: geometry.self.size.width * 0.75,
+                height: (geometry.self.size.height) * 1.25
+            )
+            .position(
+                x: self.menuIsOut ? geometry.self.size.width / 2.9 : -geometry.self.size.width,
+                y: geometry.self.size.height / 1.60
+            )
+        }
+    }
+}
+
+//MARK: Menu User Profile
+struct MenuUserProfile: View {
+    
+    var menuUserProfileWidth: CGFloat
+    var menuUserProfileHeight: CGFloat
+    
+    var username: String
+    var memberSince: String
+    
+    var body: some View {
+        HStack {
+            Circle()
+                .frame(width: 75)
+                .padding(.leading)
+            Spacer()
+            VStack {
+                Spacer()
+                Text(username)
+                    .font(.headline)
+                Spacer()
+                Text("Member since \(memberSince)")
+                    .font(.subheadline)
+                Spacer()
+            }
+            Spacer()
+        }
+        .frame(width: menuUserProfileWidth, height: menuUserProfileHeight)
+    }
+}
+
+//MARK: - Alert Window
+struct MenuAlertWindow: View {
+    
+    var alertWindowWidth: CGFloat
+    var alertWindowHeight: CGFloat
+    
+    var alertTitle: String
+    var alertSubTitle: String
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 15)
+                .opacity(0.55)
+            
+            VStack {
+                Spacer()
+                Text(alertTitle)
+                    .font(.title)
+                Spacer()
+                Text(alertSubTitle)
+                    .font(.body)
+                Spacer()
+            }
+        }
+        .frame(
+            width: alertWindowWidth,
+            height: alertWindowHeight
+            )
+    }
+}
+
+//MARK: - Menu Buttons List
+struct MenuButtonListView: View {
+    
+    //Button Titles
+    let buttonTitles: [String] = [
+        "Home",
+        "Outfit Calendar",
+        "Outfit Generation",
+        "Item Closet",
+        "Outfit Closet",
+        "Settings"
+    ]
+    
+    var body: some View {
+        List(buttonTitles, id: \.self) { buttonText in
+            Button {
+                //ADD MENU BUTTON Funcitonality here
+                print("button pressed for \(buttonText)")
+            } label: {
+                Text(buttonText)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .font(.system(size: 25))
+            }
+            .padding(.horizontal)
+            .listRowBackground(Color.clear)
+        }
+        .listStyle(.plain)
+        .listRowSeparator(.hidden)
+        .scrollDisabled(true)
+        .frame(height: 365)
+    }
+}
+
+
+//MARK: - Footer
+struct MenuViewFooter: View {
+    var body: some View {
+        Text("This is a footer")
+            .font(.system(size: 12))
+    }
+}
+
+struct MenuView_Previews: PreviewProvider {
+    static var previews: some View {
+        MenuView()
+    }
+}
